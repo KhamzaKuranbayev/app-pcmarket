@@ -3,6 +3,7 @@ package uz.pdp.apppcmarket.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.pdp.apppcmarket.constants.OrderStatus;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "pc_order")
 public class Order {
 
     @Id

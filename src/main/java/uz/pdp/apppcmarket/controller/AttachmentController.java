@@ -33,7 +33,7 @@ public class AttachmentController {
     }
 
     @SneakyThrows
-    @GetMapping("/attachment")
+    @GetMapping
     public HttpEntity<?> getAttachments() {
         List<Attachment> attachmentList = attachmentService.findAll();
         return ResponseEntity.ok(attachmentList);
