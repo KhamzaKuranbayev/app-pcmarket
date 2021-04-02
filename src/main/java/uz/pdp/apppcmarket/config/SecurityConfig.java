@@ -9,7 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import uz.pdp.apppcmarket.constants.Roles;
+import uz.pdp.apppcmarket.constants.Privilege;
+import uz.pdp.apppcmarket.constants.Role;
 
 @Configuration
 @EnableWebSecurity
@@ -22,18 +23,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .inMemoryAuthentication()
 
                 .withUser("super_admin").password(passwordEncoder().encode("super_admin"))
-                .roles("SUPER_ADMIN")
-                .authorities("ADD_PRODUCT", "READ_ALL_PRODUCTS", "READ_ONE_PRODUCT", "EDIT_PRODUCT", "DELETE_PRODUCT", "ORDER_OPERATIONS")
+                .roles(Role.SUPER_ADMIN)
+                .authorities(Privilege.ADD_PRODUCT, Privilege.READ_ALL_PRODUCTS, Privilege.READ_ONE_PRODUCT,
+                        Privilege.EDIT_PRODUCT, Privilege.DELETE_PRODUCT, Privilege.ORDER_OPERATIONS)
 
                 .and()
-
                 .withUser("moderator").password(passwordEncoder().encode("moderator"))
-                .roles("MODERATOR").authorities("ADD_PRODUCT", "EDIT_PRODUCT")
+                .roles(Role.MODERATOR).authorities(Privilege.ADD_PRODUCT, Privilege.READ_ALL_PRODUCTS,
+                Privilege.READ_ONE_PRODUCT, Privilege.EDIT_PRODUCT)
 
                 .and()
-
                 .withUser("operator").password(passwordEncoder().encode("operator"))
-                .roles("OPERATOR").authorities("ORDER_OPERATIONS");
+                .roles(Role.OPERATOR).authorities(Privilege.ADD_PRODUCT, Privilege.READ_ALL_PRODUCTS, Privilege.READ_ONE_PRODUCT,
+                Privilege.ORDER_OPERATIONS);
 
     }
 
@@ -43,13 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/product").hasAuthority("ADD_PRODUCT")
-                .antMatchers(HttpMethod.GET, "/api/product").hasAuthority("READ_ALL_PRODUCTS")
-                .antMatchers(HttpMethod.GET, "/api/product/*").hasAuthority("READ_ALL_PRODUCTS")
-                .antMatchers(HttpMethod.PUT, "/api/product/*").hasAuthority("EDIT_PRODUCTS")
-                .antMatchers(HttpMethod.DELETE, "/api/product/*").hasAuthority("DELETE_PRODUCT")
-                .antMatchers("/api/order").hasAuthority("ORDER_OPERATIONS")
-                .antMatchers("/api/order/**").hasAuthority("ORDER_OPERATIONS")
+                .antMatchers(HttpMethod.POST, "/api/product").hasAuthority(Privilege.ADD_PRODUCT)
+                .antMatchers(HttpMethod.GET, "/api/product").hasAuthority(Privilege.READ_ALL_PRODUCTS)
+                .antMatchers(HttpMethod.GET, "/api/product/*").hasAuthority(Privilege.READ_ONE_PRODUCT)
+                .antMatchers(HttpMethod.PUT, "/api/product/*").hasAuthority(Privilege.EDIT_PRODUCT)
+                .antMatchers(HttpMethod.DELETE, "/api/product/*").hasAuthority(Privilege.DELETE_PRODUCT)
+                .antMatchers("/api/order").hasAuthority(Privilege.ORDER_OPERATIONS)
+                .antMatchers("/api/order/**").hasAuthority(Privilege.ORDER_OPERATIONS)
                 .anyRequest()
                 .authenticated()
                 .and()
